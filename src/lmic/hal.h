@@ -105,6 +105,11 @@ uint8_t hal_getIrqLevel (void);
 void hal_sleep (void);
 
 /*
+ * Sleep but acounts for time not counted as CPU was asleep
+ */
+void hal_sleep_lowpower (u1_t sleepval);
+
+/*
  * return 32-bit system time in ticks.
  */
 u4_t hal_ticks (void);
