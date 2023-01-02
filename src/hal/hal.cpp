@@ -22,6 +22,8 @@
 // -----------------------------------------------------------------------------
 // I/O
 
+u4_t os_cumulated_sleep_time_in_seconds=0L;
+
 static const Arduino_LMIC::HalPinmap_t *plmic_pins;
 static Arduino_LMIC::HalConfiguration_t *pHalConfig;
 static Arduino_LMIC::HalConfiguration_t nullHalConig;
@@ -247,7 +249,7 @@ u4_t hal_ticks () {
 
     // Scaled down timestamp. The top US_PER_OSTICK_EXPONENT bits are 0,
     // the others will be the lower bits of our return value.
-    uint32_t scaled = micros() >> US_PER_OSTICK_EXPONENT;
+    uint32_t scaled = (micros()+os_cumulated_sleep_time_in_seconds*1000000) >> US_PER_OSTICK_EXPONENT;
     // Most significant byte of scaled
     uint8_t msb = scaled >> 24;
     // Mask pointing to the overlapping bit in msb and overflow.
@@ -412,6 +414,10 @@ void hal_printf_init() {
 
 #endif // !defined(ESP8266) || defined(ESP31B) || defined(ESP32)
 #endif // defined(LMIC_PRINTF_TO)
+
+void hal_sleep_lowpower (u1_t sleepval) {
+    os_cumulated_sleep_time_in_seconds += sleepval;
+}
 
 void hal_init (void) {
     // use the global constant
